@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="sr-Latn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Trening</title>
+<meta name="description" content="Kućni trening i mršavljenje">
+<meta name="theme-color" content="#0B0F14" id="metaTheme">
+<meta name="color-scheme" content="dark light">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="application-name" content="Trening">
+<meta name="apple-mobile-web-app-title" content="Trening">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="preload" href="fonts/manrope-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="app.css">
+<script>
+  // tema pre iscrtavanja, da nema "bljeska"
+  try { const s = JSON.parse(localStorage.getItem('forma.v1')||'{}'); const t = s.settings && s.settings.theme; if (t && t!=='auto') document.documentElement.dataset.theme = t; } catch(e){}
+</script>
+</head>
+<body>
+<div id="app">
+  <header class="topbar">
+    <div class="topbar-titles">
+      <div class="eyebrow" id="topEyebrow"></div>
+      <h1 id="topTitle">Danas</h1>
+    </div>
+    <button class="icon-btn" id="btnSettings" aria-label="Podešavanja">
+      <svg viewBox="0 0 24 24"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></svg>
+    </button>
+  </header>
+
+  <main id="view" tabindex="-1"></main>
+
+  <button class="activebar" id="activeBar" hidden></button>
+
+  <nav class="tabbar" id="tabbar">
+    <button data-tab="danas" class="active"><svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg><span>Danas</span></button>
+    <button data-tab="trening"><svg viewBox="0 0 24 24"><path d="M6.5 6.5v11M17.5 6.5v11M3 9.5v5M21 9.5v5M6.5 12h11"/></svg><span>Trening</span></button>
+    <button data-tab="tezina"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><path d="M7 12a5 5 0 0 1 10 0M12 12l2.4-3.2M8 17h8"/></svg><span>Težina</span><i class="dot" id="weightDot" hidden></i></button>
+    <button data-tab="koraci"><svg viewBox="0 0 24 24"><path d="M8 3.5c1.7 0 2.5 2 2.5 4.5S9.6 12.5 8 12.5 5.5 10.5 5.5 8 6.3 3.5 8 3.5ZM16 8.5c1.7 0 2.5 2 2.5 4.5S17.6 17.5 16 17.5 13.5 15.5 13.5 13s.8-4.5 2.5-4.5ZM6 15.5l4 .5-.5 3.5a2 2 0 0 1-4-.5zM14 20.5l4 .5"/></svg><span>Koraci</span></button>
+    <button data-tab="aktivnost"><svg viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg><span>Aktivnost</span></button>
+  </nav>
+</div>
+
+<!-- bottom sheet / modal -->
+<div class="scrim" id="scrim" hidden></div>
+<section class="sheet" id="sheet" role="dialog" aria-modal="true" hidden><div class="sheet-grip"></div><div id="sheetBody"></div></section>
+
+<!-- tajmer za odmor -->
+<section class="timer" id="timer" hidden aria-live="polite">
+  <div class="timer-card">
+    <div class="timer-head"><span id="timerTitle">Odmor</span><button class="icon-btn sm" id="timerClose" aria-label="Zatvori"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+    <div class="timer-ring">
+      <svg viewBox="0 0 120 120"><circle class="trk" cx="60" cy="60" r="52"/><circle class="prg" id="timerArc" cx="60" cy="60" r="52"/></svg>
+      <div class="timer-num"><b id="timerNum">1:00</b><small id="timerNext"></small></div>
+    </div>
+    <div class="seg" id="timerPresets"></div>
+    <div class="timer-actions">
+      <button class="btn ghost" id="timerPause">Pauza</button>
+      <button class="btn ghost" id="timerPlus">+15 s</button>
+      <button class="btn primary" id="timerSkip">Preskoči</button>
+    </div>
+  </div>
+</section>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script src="vendor/chart.umd.min.js"></script>
+<script src="vendor/hammer.min.js"></script>
+<script src="vendor/chartjs-plugin-zoom.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
